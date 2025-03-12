@@ -1,5 +1,5 @@
 import pygame
-
+#aj hejt cigáns, dej ár bed
 pygame.init()
 
 SCREEN_WIDTH = 800
