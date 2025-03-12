@@ -28,6 +28,9 @@ while FR == True:
             print("VIVA LA FRANCE GHEGHEGHE")
     elif a == "ne":
         a = input("zkus to znovu: ")
+    elif a == "DEUTSCHLAND":
+        print("HEIL HITLER UNSEREN MENSCHEN")
     else:
         print("NEUMIS PSAT MORE SES DYZLEKTIK NEBO NECO TY HLUPAKU")
         break
+        
