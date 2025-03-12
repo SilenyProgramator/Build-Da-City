@@ -29,5 +29,5 @@ while FR == True:
     elif a == "ne":
         a = input("zkus to znovu: ")
     else:
-        print("pico")
+        print("NEUMIS PSAT MORE SES DYZLEKTIK NEBO NECO TY HLUPAKU")
         break
