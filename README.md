@@ -1,2 +1,4 @@
 # pygamik
-první řada konce světa
+toto je repozitář pana dýně a leriho
+jsou tu náhodné věci
+nevím co dodat
