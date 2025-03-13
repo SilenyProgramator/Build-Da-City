@@ -6,21 +6,20 @@ from tkinter import simpledialog
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 600, 400  # Increased screen size
-ROWS, COLS = 8, 8  # Grid size
-CELL_SIZE = 40  # Increased square size
+ROWS, COLS = 6, 6  # Grid size
 BG_COLOR = (153, 0, 0)  # CHERRY background
-PLAYER_COLOR = (200, 0, 0)  # Red player (Change this to modify the player color)
+PLAYER_COLOR = (255, 127, 127)  # Red player
 GRID_COLOR = (192, 192, 192)  # Grid lines color
 WHITE = (255, 255, 255)
 BUTTON_COLOR = (5, 5 , 2)
 GOODCOLOR = (0, 66, 37)
 
-# icon setup!!
+# Icon setup
 icon = pygame.image.load("C:\\Users\\Olga\\Documents\\GitHub\\pygamik\\teplars.jpg") 
 pygame.display.set_icon(icon)
 
 # Create screen (Resizable)
+WIDTH, HEIGHT = 600, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("BuildACity")
 
@@ -32,13 +31,6 @@ state = MENU
 # Player starting position
 tile_x, tile_y = 0, 0
 city_name = ""
-
-# Fonts
-font = pygame.font.Font(None, 36)
-font2 = pygame.font.Font(None, 60)
-
-# Button setup
-button_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2 - 25, 100, 50)
 
 # Function to get city name
 def get_city_name():
@@ -52,17 +44,27 @@ def get_city_name():
 # Game loop
 running = True
 while running:
-    screen.fill(BG_COLOR)
     WIDTH, HEIGHT = screen.get_size()  # Update dimensions if resized
+    CELL_SIZE = min(WIDTH // COLS, HEIGHT // ROWS)  # Scale cells proportionally
+    FONT_SIZE = CELL_SIZE // 2  # Adjust font size
+    font = pygame.font.Font(None, FONT_SIZE)
+    font2 = pygame.font.Font(None, FONT_SIZE + 24)
+
+    screen.fill(BG_COLOR)
     
     if state == MENU:
         # Draw menu screen
         title_text = font2.render("Create a City", True, WHITE)
-        screen.blit(title_text, (WIDTH // 2 - 140, 70))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 4))
         
+        # Scale button
+        button_width, button_height = CELL_SIZE * 2, CELL_SIZE // 2
+        button_rect = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2, button_width, button_height)
         pygame.draw.rect(screen, BUTTON_COLOR, button_rect)
+        
         button_text = font.render("Start", True, WHITE)
-        screen.blit(button_text, (button_rect.x + 20, button_rect.y + 10))
+        screen.blit(button_text, (button_rect.x + (button_width - button_text.get_width()) // 2, 
+                                  button_rect.y + (button_height - button_text.get_height()) // 2))
     
     elif state == GAME:
         # Draw grid
@@ -77,10 +79,7 @@ while running:
         
         # Display city name
         city_text = font.render(city_name, True, WHITE)
-        screen.blit(city_text, (WIDTH - 200, 50))
-    
-    
-    
+        screen.blit(city_text, (WIDTH - city_text.get_width() - 20, 20))
     
     # Handle events
     for event in pygame.event.get():
