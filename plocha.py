@@ -17,7 +17,7 @@ BUTTON_COLOR = (5, 5 , 2)
 GOODCOLOR = (0, 66, 37)
 
 # icon setup!!
-icon = pygame.image.load("icon.png")  
+icon = pygame.image.load("C:\\Users\\Olga\\Documents\\GitHub\\pygamik\\skyscraperCXD.png") 
 pygame.display.set_icon(icon)
 
 # Create screen (Resizable)
