@@ -9,15 +9,15 @@ pygame.init()
 WIDTH, HEIGHT = 600, 400  # Increased screen size
 ROWS, COLS = 8, 8  # Grid size
 CELL_SIZE = 40  # Increased square size
-BG_COLOR = (34, 177, 76)  # Green background
+BG_COLOR = (153, 0, 0)  # CHERRY background
 PLAYER_COLOR = (200, 0, 0)  # Red player (Change this to modify the player color)
-GRID_COLOR = (0, 100, 0)  # Grid lines color
+GRID_COLOR = (192, 192, 192)  # Grid lines color
 WHITE = (255, 255, 255)
 BUTTON_COLOR = (5, 5 , 2)
 GOODCOLOR = (0, 66, 37)
 
 # icon setup!!
-icon = pygame.image.load("C:\\Users\\Olga\\Documents\\GitHub\\pygamik\\skyscraperCXD.png") 
+icon = pygame.image.load("C:\\Users\\Olga\\Documents\\GitHub\\pygamik\\teplars.jpg") 
 pygame.display.set_icon(icon)
 
 # Create screen (Resizable)
@@ -76,7 +76,7 @@ while running:
         pygame.draw.rect(screen, PLAYER_COLOR, player_rect)
         
         # Display city name
-        city_text = font.render(city_name, True, GOODCOLOR)
+        city_text = font.render(city_name, True, WHITE)
         screen.blit(city_text, (WIDTH - 200, 50))
     
     
