@@ -16,9 +16,13 @@ WHITE = (255, 255, 255)
 BUTTON_COLOR = (5, 5 , 2)
 GOODCOLOR = (0, 66, 37)
 
+# icon setup!!
+icon = pygame.image.load("icon.png")  
+pygame.display.set_icon(icon)
+
 # Create screen (Resizable)
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-pygame.display.set_caption("Grid Movement")
+pygame.display.set_caption("BuildACity")
 
 # Game states
 MENU = "menu"
