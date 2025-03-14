@@ -7,12 +7,16 @@ pygame.init()
 
 # Constants
 ROWS, COLS = 6, 6  # Grid size
-BG_COLOR = (153, 0, 0)  # CHERRY background
-PLAYER_COLOR = (255, 127, 127)  # Red player
-GRID_COLOR = (192, 192, 192)  # Grid lines color
+BG_COLOR = (153, 0, 0)  # Background
+GRID_COLOR = (192, 192, 192)  # Grid lines
 WHITE = (255, 255, 255)
-BUTTON_COLOR = (5, 5 , 2)
-GOODCOLOR = (0, 66, 37)
+BUTTON_COLOR = (5, 5, 2)
+PLAYER_ALPHA = 150  # Transparency level (0 = fully transparent, 255 = solid)
+
+# Colors for selection
+COLOR_OPTIONS = [(255, 127, 127), (0, 255, 0), (0, 0, 255), (255, 255, 0)]  # Red, Green, Blue, Yellow
+COLOR_NAMES = ["Red", "Green", "Blue", "Yellow"]
+selected_color_index = 0  # Tracks the selected color in the menu
 
 # Icon setup
 icon = pygame.image.load("teplars.jpg") 
@@ -26,11 +30,17 @@ pygame.display.set_caption("BuildACity")
 # Game states
 MENU = "menu"
 GAME = "game"
+COLOR_MENU = "color_menu"
 state = MENU
 
 # Player starting position
 tile_x, tile_y = 0, 0
 city_name = ""
+
+# Create a grid where each tile starts as the default grid color
+DEFAULT_TILE_COLOR = (220, 220, 220)  # Light gray for uncolored tiles
+tile_colors = [[DEFAULT_TILE_COLOR for _ in range(COLS)] for _ in range(ROWS)]
+
 
 # Function to get city name
 def get_city_name():
@@ -40,6 +50,12 @@ def get_city_name():
     city_name = simpledialog.askstring("City Name", "Enter your city name:")
     if city_name is None:
         city_name = "Unnamed City"
+
+# Create a semi-transparent player surface
+def create_transparent_surface(color, size, alpha):
+    surface = pygame.Surface((size, size), pygame.SRCALPHA)
+    surface.fill((*color, alpha))  # Add transparency
+    return surface
 
 # Game loop
 running = True
@@ -67,20 +83,32 @@ while running:
                                   button_rect.y + (button_height - button_text.get_height()) // 2))
     
     elif state == GAME:
-        # Draw grid
+        # Draw grid with tile colors
         for row in range(ROWS):
             for col in range(COLS):
                 rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                pygame.draw.rect(screen, GRID_COLOR, rect, 1)
+                pygame.draw.rect(screen, tile_colors[row][col], rect)  # Use stored color
+                pygame.draw.rect(screen, GRID_COLOR, rect, 2)  # Draw grid lines (thicker for visibility)
         
-        # Draw player
-        player_rect = pygame.Rect(tile_x * CELL_SIZE, tile_y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        pygame.draw.rect(screen, PLAYER_COLOR, player_rect)
+        # Draw semi-transparent player
+        player_surface = create_transparent_surface(WHITE, CELL_SIZE, PLAYER_ALPHA)
+        screen.blit(player_surface, (tile_x * CELL_SIZE, tile_y * CELL_SIZE))
         
         # Display city name
         city_text = font.render(city_name, True, WHITE)
         screen.blit(city_text, (WIDTH - city_text.get_width() - 20, 20))
-    
+
+    elif state == COLOR_MENU:
+        # Show the color selection menu
+        screen.fill(BG_COLOR)  # Background color
+        menu_title = font2.render("Select a Tile Color", True, WHITE)
+        screen.blit(menu_title, (WIDTH // 2 - menu_title.get_width() // 2, HEIGHT // 6))
+
+        for i, color_name in enumerate(COLOR_NAMES):
+            text_color = WHITE if i == selected_color_index else (180, 180, 180)
+            option_text = font.render(color_name, True, text_color)
+            screen.blit(option_text, (WIDTH // 2 - option_text.get_width() // 2, HEIGHT // 3 + i * 40))
+
     # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -91,16 +119,28 @@ while running:
             if button_rect.collidepoint(event.pos):
                 get_city_name()
                 state = GAME
-        elif event.type == pygame.KEYDOWN and state == GAME:
-            if event.key == pygame.K_UP and tile_y > 0:
-                tile_y -= 1
-            elif event.key == pygame.K_DOWN and tile_y < ROWS - 1:
-                tile_y += 1
-            elif event.key == pygame.K_LEFT and tile_x > 0:
-                tile_x -= 1
-            elif event.key == pygame.K_RIGHT and tile_x < COLS - 1:
-                tile_x += 1
-    
+        elif event.type == pygame.KEYDOWN:
+            if state == GAME:
+                if event.key == pygame.K_UP and tile_y > 0:
+                    tile_y -= 1
+                elif event.key == pygame.K_DOWN and tile_y < ROWS - 1:
+                    tile_y += 1
+                elif event.key == pygame.K_LEFT and tile_x > 0:
+                    tile_x -= 1
+                elif event.key == pygame.K_RIGHT and tile_x < COLS - 1:
+                    tile_x += 1
+                elif event.key == pygame.K_e:  # Open color selection for the current tile
+                    state = COLOR_MENU
+
+            elif state == COLOR_MENU:
+                if event.key == pygame.K_UP:
+                    selected_color_index = (selected_color_index - 1) % len(COLOR_OPTIONS)
+                elif event.key == pygame.K_DOWN:
+                    selected_color_index = (selected_color_index + 1) % len(COLOR_OPTIONS)
+                elif event.key == pygame.K_RETURN:  # Confirm selection
+                    tile_colors[tile_y][tile_x] = COLOR_OPTIONS[selected_color_index]
+                    state = GAME  # Return to the game
+
     pygame.display.flip()
     pygame.time.delay(100)  # Small delay to control movement speed
 
