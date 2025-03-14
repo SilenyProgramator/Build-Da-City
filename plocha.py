@@ -15,7 +15,7 @@ BUTTON_COLOR = (5, 5 , 2)
 GOODCOLOR = (0, 66, 37)
 
 # Icon setup
-icon = pygame.image.load("C:\\Users\\Olga\\Documents\\GitHub\\pygamik\\teplars.jpg") 
+icon = pygame.image.load("teplars.jpg") 
 pygame.display.set_icon(icon)
 
 # Create screen (Resizable)
