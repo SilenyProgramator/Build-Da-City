@@ -39,7 +39,7 @@ pygame.display.set_caption("BuildACity")
 MENU = "menu"
 GAME = "game"
 COLOR_MENU = "color_menu"
-WIN = "win"
+ABSOLUTNIPROHRA = "win"
 state = MENU
 
 # Player starting position
@@ -127,7 +127,7 @@ while running:
 
         # Check for win condition
         if communism >= 100:
-            state = WIN  # Switch to win state
+            state = ABSOLUTNIPROHRA  # Switch to win state
     
     elif state == COLOR_MENU:
         # Show the color selection menu
@@ -142,7 +142,7 @@ while running:
             screen.blit(option_text, (WIDTH // 2 - option_text.get_width() // 2, HEIGHT // 3 + i * spacing))
 
 
-    elif state == WIN:
+    elif state == ABSOLUTNIPROHRA:
         # Display "You Win!" message
         win_text = font2.render("Communism has taken over! You were executed :(", True, (0, 255, 0))  # Green text for win
         screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, HEIGHT // 2 - win_text.get_height() // 2))
