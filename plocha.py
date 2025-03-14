@@ -12,18 +12,26 @@ GRID_COLOR = (192, 192, 192)  # Grid lines
 WHITE = (255, 255, 255)
 BUTTON_COLOR = (5, 5, 2)
 PLAYER_ALPHA = 150  # Transparency level (0 = fully transparent, 255 = solid)
+HUD_COLOR = (255, 255, 255)  # HUD text color
 
 # Colors for selection
 COLOR_OPTIONS = [(255, 127, 127), (0, 255, 0), (0, 0, 255), (255, 255, 0)]  # Red, Green, Blue, Yellow
-COLOR_NAMES = ["Red", "Green", "Blue", "Yellow"]
+COLOR_NAMES = ["Marx´s Statue", "Bank", "Sky Scraper", "Farm"]
 selected_color_index = 0  # Tracks the selected color in the menu
+
+# Earnings per second
+EARNINGS = {
+    (0, 255, 0): {"money": 50, "pop": 0, "wheat": 0},  # Green 🟩 → +50 Money
+    (0, 0, 255): {"money": 0, "pop": 100, "wheat": 0},  # Blue 🟦 → +100 Population
+    (255, 255, 0): {"money": 0, "pop": 0, "wheat": 1}   # Yellow 🟨 → +1 Wheat
+}
 
 # Icon setup
 icon = pygame.image.load("teplars.jpg") 
 pygame.display.set_icon(icon)
 
 # Create screen (Resizable)
-WIDTH, HEIGHT = 600, 400
+WIDTH, HEIGHT = 1200, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("BuildACity")
 
@@ -31,16 +39,22 @@ pygame.display.set_caption("BuildACity")
 MENU = "menu"
 GAME = "game"
 COLOR_MENU = "color_menu"
+WIN = "win"
 state = MENU
 
 # Player starting position
 tile_x, tile_y = 0, 0
 city_name = ""
 
-# Create a grid where each tile starts as the default grid color
+# Resources
+money = 1000  # You can change this to 0 if you want to start with no money
+population = 0
+wheat = 0
+communism = 0  # communism percentage (starts at 0)
+
+# Create a grid where each tile starts as the default color
 DEFAULT_TILE_COLOR = (220, 220, 220)  # Light gray for uncolored tiles
 tile_colors = [[DEFAULT_TILE_COLOR for _ in range(COLS)] for _ in range(ROWS)]
-
 
 # Function to get city name
 def get_city_name():
@@ -56,6 +70,9 @@ def create_transparent_surface(color, size, alpha):
     surface = pygame.Surface((size, size), pygame.SRCALPHA)
     surface.fill((*color, alpha))  # Add transparency
     return surface
+
+# Timer for resource gain
+pygame.time.set_timer(pygame.USEREVENT, 1000)  # 1 second interval
 
 # Game loop
 running = True
@@ -87,27 +104,48 @@ while running:
         for row in range(ROWS):
             for col in range(COLS):
                 rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                pygame.draw.rect(screen, tile_colors[row][col], rect)  # Use stored color
-                pygame.draw.rect(screen, GRID_COLOR, rect, 2)  # Draw grid lines (thicker for visibility)
+                pygame.draw.rect(screen, tile_colors[row][col], rect)  # Tile fill
+                pygame.draw.rect(screen, GRID_COLOR, rect, 2)  # Grid lines (only borders)
         
         # Draw semi-transparent player
         player_surface = create_transparent_surface(WHITE, CELL_SIZE, PLAYER_ALPHA)
         screen.blit(player_surface, (tile_x * CELL_SIZE, tile_y * CELL_SIZE))
         
-        # Display city name
+        # Display city name & resources
         city_text = font.render(city_name, True, WHITE)
         screen.blit(city_text, (WIDTH - city_text.get_width() - 20, 20))
+        
+        money_text = font.render(f"Money = {money} $", True, HUD_COLOR)
+        pop_text = font.render(f"Population = {population} Mil", True, HUD_COLOR)
+        wheat_text = font.render(f"Wheat = {wheat} Tons", True, HUD_COLOR)
+        communism_text = font.render(f"Communism: {communism}%", True, HUD_COLOR)
 
+        screen.blit(money_text, (WIDTH - money_text.get_width() - 20, 100))
+        screen.blit(pop_text, (WIDTH - pop_text.get_width() - 20, 200))
+        screen.blit(wheat_text, (WIDTH - wheat_text.get_width() - 20, 300))
+        screen.blit(communism_text, (WIDTH - communism_text.get_width() - 20, 400))
+
+        # Check for win condition
+        if communism >= 100:
+            state = WIN  # Switch to win state
+    
     elif state == COLOR_MENU:
         # Show the color selection menu
         screen.fill(BG_COLOR)  # Background color
-        menu_title = font2.render("Select a Tile Color", True, WHITE)
+        menu_title = font2.render("Select a Building", True, WHITE)
         screen.blit(menu_title, (WIDTH // 2 - menu_title.get_width() // 2, HEIGHT // 6))
 
+        spacing = 100  # Increase the spacing between options
         for i, color_name in enumerate(COLOR_NAMES):
             text_color = WHITE if i == selected_color_index else (180, 180, 180)
             option_text = font.render(color_name, True, text_color)
-            screen.blit(option_text, (WIDTH // 2 - option_text.get_width() // 2, HEIGHT // 3 + i * 40))
+            screen.blit(option_text, (WIDTH // 2 - option_text.get_width() // 2, HEIGHT // 3 + i * spacing))
+
+
+    elif state == WIN:
+        # Display "You Win!" message
+        win_text = font2.render("Communism has taken over! You were executed :(", True, (0, 255, 0))  # Green text for win
+        screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, HEIGHT // 2 - win_text.get_height() // 2))
 
     # Handle events
     for event in pygame.event.get():
@@ -129,7 +167,7 @@ while running:
                     tile_x -= 1
                 elif event.key == pygame.K_RIGHT and tile_x < COLS - 1:
                     tile_x += 1
-                elif event.key == pygame.K_e:  # Open color selection for the current tile
+                elif event.key == pygame.K_e:
                     state = COLOR_MENU
 
             elif state == COLOR_MENU:
@@ -137,11 +175,28 @@ while running:
                     selected_color_index = (selected_color_index - 1) % len(COLOR_OPTIONS)
                 elif event.key == pygame.K_DOWN:
                     selected_color_index = (selected_color_index + 1) % len(COLOR_OPTIONS)
-                elif event.key == pygame.K_RETURN:  # Confirm selection
-                    tile_colors[tile_y][tile_x] = COLOR_OPTIONS[selected_color_index]
-                    state = GAME  # Return to the game
+                elif event.key == pygame.K_RETURN:
+                    if money >= 100:  # Check if you have enough money
+                        tile_colors[tile_y][tile_x] = COLOR_OPTIONS[selected_color_index]
+                        money -= 100  # Subtract 100 money when you change a tile
+                        state = GAME  
+                    else:
+                        print("Not enough money!")
+
+        elif event.type == pygame.USEREVENT and state == GAME:
+            for row in tile_colors:
+                for color in row:
+                    if color in EARNINGS:
+                        money += EARNINGS[color]["money"]
+                        population += EARNINGS[color]["pop"]
+                        wheat += EARNINGS[color]["wheat"]
+                    if color == (255, 127, 127):  # Red 🟥 → Increase communism by 1% per second
+                        communism += 1
+
+    # Make sure communism does not exceed 100%
+    communism = min(communism, 100)
 
     pygame.display.flip()
-    pygame.time.delay(100)  # Small delay to control movement speed
+    pygame.time.delay(100)
 
 pygame.quit()
