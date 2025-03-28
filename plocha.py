@@ -59,10 +59,20 @@ def political_compass():
     movement_speed = 20  # Increase speed of movement
     running = True
     
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, 31)  # Increased font size for better visibility
     label_color = WHITE  # Set text color to white for visibility
     
     while running:
+        screen.fill(BG_COLOR)  # Clear the screen
+        
+        # Draw "Choose Ideology" label above the compass
+        title_text = font.render("Choose Ideology", True, label_color)
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 2 - compass_height // 2 - 30))  # Move lower for better visibility
+        
+        # Draw "Enter:vyber" label next to the compass
+        enter_text = font.render("Enter", True, label_color)
+        screen.blit(enter_text, (WIDTH // 2 + compass_width // 2 + 18, HEIGHT // 2 - compass_height // 2))
+        
         compass_surface.fill(WHITE)
         
         # Draw quadrants
@@ -71,17 +81,13 @@ def political_compass():
         pygame.draw.rect(compass_surface, IDEOLOGIES["dumbassism"][1], (0, compass_height // 2, compass_width // 2, compass_height // 2))
         pygame.draw.rect(compass_surface, IDEOLOGIES["capitalism"][1], (compass_width // 2, compass_height // 2, compass_width // 2, compass_height // 2))
         
-        # Draw "Choose Ideology" label
-        title_text = font.render("Choose Ideology", True, label_color)
-        compass_surface.blit(title_text, (compass_width // 2 - title_text.get_width() // 2, 10))
-        
-        # Draw labels for each ideology (with white text)
+        # Draw labels for each ideology
         for ideology, (name, color) in IDEOLOGIES.items():
             text = font.render(name, True, label_color)
             if ideology == "communism":
-                compass_surface.blit(text, (20, 20 + title_text.get_height()))  # Adjust position for "Choose Ideology"
+                compass_surface.blit(text, (20, 20))
             elif ideology == "nazism":
-                compass_surface.blit(text, (compass_width - text.get_width() - 20, 20 + title_text.get_height()))
+                compass_surface.blit(text, (compass_width - text.get_width() - 20, 20))
             elif ideology == "dumbassism":
                 compass_surface.blit(text, (20, compass_height - text.get_height() - 20))
             elif ideology == "capitalism":
@@ -116,12 +122,10 @@ def political_compass():
                     running = False
         
         # Blit compass surface to the screen
-        screen.fill(BG_COLOR)  # Clear the screen
-        screen.blit(compass_surface, (WIDTH // 2 - compass_width // 2, HEIGHT // 2 - compass_height // 2))  # Draw compass at center
+        screen.blit(compass_surface, (WIDTH // 2 - compass_width // 2, HEIGHT // 2 - compass_height // 2))
         pygame.display.flip()
 
     state = GAME  # Switch state to GAME
-    pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)  # Return to original screen size
 
 # Game loop
 running = True
