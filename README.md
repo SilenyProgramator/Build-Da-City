@@ -1,4 +1,4 @@
-# Build a City
+# Build Da City
 
 BuildACity is a minimalist city-building sim with a darkly satirical twist. Guide your pixelated avatar across a 6×6 grid to place down ideological landmarks—each bringing unique resources to your budding metropolis. Will you prioritize banks for wealth, farms for sustainability, or statues of Marx that slowly usher in a communist revolution? Every choice shapes the identity and future of your city. With an intuitive control scheme and real-time resource gains, BuildACity blends relaxing gameplay with a creeping sense of inevitability.
 
