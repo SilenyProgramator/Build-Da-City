@@ -1,5 +1,5 @@
-# pygamik
-toto je repozitář pana dýně a leriho 
-jsou tu náhodné věci
-nevím co dodat
-YES
+# Build a City
+
+BuildACity is a minimalist city-building sim with a darkly satirical twist. Guide your pixelated avatar across a 6×6 grid to place down ideological landmarks—each bringing unique resources to your budding metropolis. Will you prioritize banks for wealth, farms for sustainability, or statues of Marx that slowly usher in a communist revolution? Every choice shapes the identity and future of your city. With an intuitive control scheme and real-time resource gains, BuildACity blends relaxing gameplay with a creeping sense of inevitability.
+
+As your economy grows and your population booms, so too does the shadow of ideology. A statue here, a skyscraper there—before long, communism creeps toward 100%. Reach that critical mass, and your game ends in one of the most ironic "victory" screens ever coded. BuildACity may look simple, but underneath its retro visuals lies a clever, tongue-in-cheek political simulator where the only real enemy… might be your own urban planning instincts.
